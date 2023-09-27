@@ -23,42 +23,63 @@ $(function () {
 });
 
 $(document).ready(function() {
-  // Define working hours (9am to 5pm)
-  var workingHours = Array.from({ length: 9 }, (_, i) => 9 + i);
+  // Function to update the time blocks based on the current time
+  function updateBlocks() {
+    const currentHour = dayjs().hour();
 
-  // Function to generate time slots
-  function generateTimeSlots() {
-      var timeSlotsContainer = $('.time-slots');
+    $(".time-block").each(function() {
+      const blockHour = parseInt($(this).attr("id").split("-")[1]);
 
-      workingHours.forEach(hour => {
-          var timeSlot = $('<div class="time-slot">');
-          var timeLabel = $('<label>').text(hour + ':00');
-          var eventInput = $('<input type="text" placeholder="Add event">');
-          var saveButton = $('<button>').text('Save');
-
-          // Event handler to save the event
-          saveButton.click(function() {
-              var eventText = eventInput.val();
-              if (eventText.trim() !== '') {
-                  // Save the event to local storage or any preferred data storage
-                  // For simplicity, we'll use local storage here
-                  localStorage.setItem(`event-${hour}`, eventText);
-                  alert('Event saved!');
-              }
-          });
-
-          timeSlot.append(timeLabel, eventInput, saveButton);
-          timeSlotsContainer.append(timeSlot);
-
-          // Retrieve and display any saved events
-          const savedEvent = localStorage.getItem(`event-${hour}`);
-          if (savedEvent) {
-              eventInput.val(savedEvent);
-          }
-      });
+      if (blockHour < currentHour) {
+        $(this).removeClass("present future").addClass("past");
+      } else if (blockHour === currentHour) {
+        $(this).removeClass("past future").addClass("present");
+      } else {
+        $(this).removeClass("past present").addClass("future");
+      }
+    });
   }
 
-  // Initialize the calendar
-  generateTimeSlots();
+  // Function to load saved events from local storage
+  function loadEvents() {
+    $(".time-block").each(function() {
+      const blockHour = parseInt($(this).attr("id").split("-")[1]);
+      const savedEvent = localStorage.getItem(`event-${blockHour}`);
+
+      if (savedEvent) {
+        $(this).find(".description").val(savedEvent);
+      }
+    });
+  }
+
+  // Function to save events to local storage
+  $(".saveBtn").click(function() {
+    const blockHour = parseInt($(this).closest(".time-block").attr("id").split("-")[1]);
+    const eventText = $(this).closest(".time-block").find(".description").val();
+
+    if (eventText.trim() !== "") {
+      localStorage.setItem(`event-${blockHour}`, eventText);
+      alert("Event saved!");
+    }
+  });
+
+  // Update the time blocks and load events when the page loads
+  updateBlocks();
+  loadEvents();
+
+  // Update the time blocks every minute to reflect the current time
+  setInterval(updateBlocks, 60000);
+
+  // Display the current date and time
+  function displayCurrentTime() {
+    const currentDate = dayjs().format("dddd, MMMM D, YYYY");
+    $("#currentDay").text(currentDate);
+  }
+
+  displayCurrentTime();
+
+  // Update the current date and time every second
+  setInterval(displayCurrentTime, 1000);
 });
+
 

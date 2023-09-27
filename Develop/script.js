@@ -24,21 +24,21 @@ $(function () {
 
 $(document).ready(function() {
   // Define working hours (9am to 5pm)
-  const workingHours = Array.from({ length: 9 }, (_, i) => 9 + i);
+  var workingHours = Array.from({ length: 9 }, (_, i) => 9 + i);
 
   // Function to generate time slots
   function generateTimeSlots() {
-      const timeSlotsContainer = $('.time-slots');
+      var timeSlotsContainer = $('.time-slots');
 
       workingHours.forEach(hour => {
-          const timeSlot = $('<div class="time-slot">');
-          const timeLabel = $('<label>').text(hour + ':00');
-          const eventInput = $('<input type="text" placeholder="Add event">');
-          const saveButton = $('<button>').text('Save');
+          var timeSlot = $('<div class="time-slot">');
+          var timeLabel = $('<label>').text(hour + ':00');
+          var eventInput = $('<input type="text" placeholder="Add event">');
+          var saveButton = $('<button>').text('Save');
 
           // Event handler to save the event
           saveButton.click(function() {
-              const eventText = eventInput.val();
+              var eventText = eventInput.val();
               if (eventText.trim() !== '') {
                   // Save the event to local storage or any preferred data storage
                   // For simplicity, we'll use local storage here

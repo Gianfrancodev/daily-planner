@@ -21,3 +21,44 @@ $(function () {
   //
   // TODO: Add code to display the current date in the header of the page.
 });
+
+$(document).ready(function() {
+  // Define working hours (9am to 5pm)
+  const workingHours = Array.from({ length: 9 }, (_, i) => 9 + i);
+
+  // Function to generate time slots
+  function generateTimeSlots() {
+      const timeSlotsContainer = $('.time-slots');
+
+      workingHours.forEach(hour => {
+          const timeSlot = $('<div class="time-slot">');
+          const timeLabel = $('<label>').text(hour + ':00');
+          const eventInput = $('<input type="text" placeholder="Add event">');
+          const saveButton = $('<button>').text('Save');
+
+          // Event handler to save the event
+          saveButton.click(function() {
+              const eventText = eventInput.val();
+              if (eventText.trim() !== '') {
+                  // Save the event to local storage or any preferred data storage
+                  // For simplicity, we'll use local storage here
+                  localStorage.setItem(`event-${hour}`, eventText);
+                  alert('Event saved!');
+              }
+          });
+
+          timeSlot.append(timeLabel, eventInput, saveButton);
+          timeSlotsContainer.append(timeSlot);
+
+          // Retrieve and display any saved events
+          const savedEvent = localStorage.getItem(`event-${hour}`);
+          if (savedEvent) {
+              eventInput.val(savedEvent);
+          }
+      });
+  }
+
+  // Initialize the calendar
+  generateTimeSlots();
+});
+
